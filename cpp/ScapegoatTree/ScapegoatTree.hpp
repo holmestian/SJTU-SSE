@@ -29,7 +29,7 @@ public:
 		}
 	}
 
-	update(){
+	void update(){
 		int lsize, rsize;
 		lsize = (ls == NULL) ? 0 : ls -> TreeSize;
 		rsize = (rs == NULL) ? 0 : rs -> TreeSize;
