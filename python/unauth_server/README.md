@@ -7,7 +7,8 @@
 * Django rest-framework 3
 ###
 
-    cd unauth/
+    cd unauth_server/
+    g++ -o treeLib.so -shared -fPIC ciphertext/tree.py
     python manage.py runserver [0.0.0.0:8000]
 
 You can visit *http://localhost:8000/* to check the API.
