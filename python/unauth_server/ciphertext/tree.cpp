@@ -260,7 +260,7 @@ public:
 };
 
 extern "C" {
-	int ContentSize = 10;
+	int ContentSize = 100;
 	ScapegoatTree obj(ContentSize);
 
 	void Insert(int id, char* s) {

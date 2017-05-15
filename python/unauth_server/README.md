@@ -8,7 +8,7 @@
 ###
 
     cd unauth_server/
-    g++ -o treeLib.so -shared -fPIC ciphertext/tree.py
+    g++ -o treeLib.so -shared -fPIC ciphertext/tree.cpp
     python manage.py runserver [0.0.0.0:8000]
 
 You can visit *http://localhost:8000/* to check the API.
