@@ -2,7 +2,7 @@ SJTU-SSE
 =====================
 ### *Dynamic Searchable Symmetric Encryption*
 
-This project is an implementation of Dynamic SSE. We use keyword balanced binary tree to keep efficency in keyword searching. There are **several verions** for our project. We firstly finish a simple memory version then we transplant the algorthims to graph database(neo4j). You can check our competition report [here](http://github.com/wangjksjtu) where we give **detailed algorthims**, **implementations** and **tests**.
+This project is an implementation of Dynamic SSE. We use keyword balanced binary tree to keep efficency in keyword searching. There are **several verions** for our project. We firstly finish a simple memory version then we transplant the algorthims to graph database(neo4j). You can check our competition report [here](https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/%E5%9F%BA%E4%BA%8E%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8F%AF%E6%90%9C%E7%B4%A2%E5%8A%A0%E5%AF%86%E7%B3%BB%E7%BB%9F.pdf) where we give **detailed algorthims**, **implementations** and **tests**.
 
 ### SSE: Memory Version
 Memory Version doesn't mean loss of infomation when power is off. We use sqlite3 and tmp file to keep information (both tree and ciphers) persistent. The scapegoat tree was implemented in c++, which is covered with c and called by python. (using ctypes module)
@@ -48,7 +48,7 @@ cd ~/neo4j-3.2.0/bin
 ./neo4j start
 ```
 #### After Neo4j is started
-Go to http://localhost:7474 in your favorite browser and update the default password. 
+Go to *http://localhost:7474* in your favorite browser and update the default password. 
 
 Copy the Cypher statements below and paste it in the query window at the top:
 ```
