@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super }} | Key | {{ object }}{% endblock %}
+
+{% block content %}
+<!--   {{object.node}} -->
+    <h1> Key: {{ object }} </h1>
+    <br>
+    <h4> Name: {{object.node.name}} &nbsp&nbsp&nbsp Id: {{object.node.handle_id}} </h4>
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+<!--                {% if object.node.key %}
+                    <dt>Value:</dt><dd>{{ object.node.key }}</dd>
+                    {% endif %} -->
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Ciphertexts</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        {% for cipher in object.ciphers %}
+                            <li>
+                                <a href={{cipher.cipher.get_absolute_url}}><h4>{{ cipher.cipher }}</h4></a>
+                            </li>
+                        {% empty %}
+                            <li>No ciphertext yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super }} | Ciphertext | {{object.node.ciphertext}} {% endblock %}
+
+{% block content %}
+    <h1>{{ object.node.name }}</h1>
+<!--    {{ object.node }} -->
+    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Content</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        <h4>{{ object.node.content }}</h4>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+               
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Keys</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        {% for key in object.keys %}
+                            <li>
+                                <a href="{{ key.key.get_absolute_url }}"><h4>{{ key.key }}</h4></a>
+                            </li>
+                        {% empty %}
+                            <li>No key yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

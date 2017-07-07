@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super }} | Keys{% endblock %}
+
+{% block content %}
+    <div class="list-group">
+        {% for key in object_list|dictsort:"key" %}
+            <a href="{{ key.get_absolute_url }}" class="list-group-item">
+                <h4 class="list-group-item-heading">{{ key }}</h4>
+                <p class="list-group-item-text">More to come</p>
+            </a>
+        {% empty %}
+            <a href="/">
+                <h4 class="list-group-item-heading">No keys yet</h4>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}
