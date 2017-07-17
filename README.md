@@ -7,7 +7,7 @@ This project is an implementation of Dynamic SSE. We use keyword balanced binary
 ### SSE: Memory Version
 Memory Version doesn't mean loss of infomation when power is off. We use sqlite3 and tmp file to keep information (both tree and ciphers) persistent. The scapegoat tree was implemented in c++, which is covered with c and called by python. (using ctypes module)
 
-### Environment ###
+### Environment1: ###
 
 * Python 2.7 
 * Django 1.10 
@@ -20,8 +20,64 @@ Memory Version doesn't mean loss of infomation when power is off. We use sqlite3
 
 Go to *http://localhost:8000/* to check the API.
 
+### SSE: Neo4j Version
+Compared with Memory Version, this version is implemented in neo4j database, which provides supports for parallel computing(query). The whole codes are in python/neo4j_v3 folders and tranplant scapegoat tree into graph database, which guarantees high stability, efficiency and scalability. You can deploy this API by following steps.
+### Environment2: ###
+
+* Python 2.7
+* Neo4j 3.0+
+* Django 1.10+
+* Django rest-framework 3
+* neomodel / django-neomodel
+* corsheaders (support for JSONP)
+* sslserver (support for https)
+
+**Tips**: You can install these packages using pip. To prevent conflicts, you'd better use virtual environment by installing virtualenv and virtualenv-wrapper. You can download neo4j from [offical website](https://neo4j.com/).
+
+    pip install virtualenv
+    pip install virtualenvwrapper
+    ...(After a series of settings)
+    pip install django1.11
+    pip install restframework
+    pip install corsheaders
+    pip install neomodel
+    pip install django-neomodel
+    pip install sslserver
+
+#### After Installation
+
+    ~/neo4j-3.2.0/bin/neo4j start
+    cd SJTU-SSE/python/neo4j_v3
+    python manager.py runserver (0.0.0.0:[8000])
+
+If you want to support https, you can replace the last command into 
+```
+python manage.py runsslserver --certificate [path to ssl-certificate] --key [path to ssl-key] 0.0.0.0:[8000]
+```
+
+Go to *http://localhost:8000/* to check the API.
+You can also visit *http://localhost:7474/* to look through neo4j web browser where you can have a look at scapegoat tree in graph database.
+
+#### Illustration for API 
+We have deployed the service on  *http://115.159.88.104:2118/*
+* Api-Root : &nbsp; **GET**  &nbsp;&nbsp; (/)
+* Ciphers : &nbsp; **GET**, **POST**  &nbsp;&nbsp; (/ciphertext)
+* Details : &nbsp; **GET**, **DELETE**, **PUT** &nbsp;&nbsp; (/ciphertext/id)
+* Querys  : &nbsp; **GET** &nbsp;&nbsp; (/ciphertext/?key=3|5|7-2|1|8)
+> When you search files that include some keys such as A, B and C and do not include some keys such as C, D and E, you should send **GET** http request to http://115.159.88.104:2118/ciphertext/?key=A|B|C-D|E|F where A~F are non-negative numbers.
+
+
+### Screenshots for API
+<p align="center">
+<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_ciphers.png", width=600, height=430 />
+<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_graph.png", width=600, height=430/>
+</p>
+
+### SSE: Neo4j Many to Many API
+We also implement many-to-many SSE in neo4j database. The environments and commands are similar to Neo4j Tree Version and the whole codes can be found python/neo4j_v2 folder in this repo. This API also supports create, delete, update, retrieve and search files. After deployment, you can also go to port 8000 and 7474 to check API and graph. 
+
 ### SSE: Neo4j with Django Demo (modified this [repo](https://github.com/johanlundberg/neo4j-django-tutorial/))
-#### How to start
+#### Quickstart
 Clone this repository:
 
 ```
@@ -103,3 +159,5 @@ Go to *http://localhost:8000/* to check the demo.
 <img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v1_admin.png", width=600, height=430/>
 <img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v1_graph.png", width=600, height=430/>
 </p>
+
+
