@@ -69,8 +69,8 @@ We have deployed the service on  *http://115.159.88.104:2118/*
 
 ### Screenshots for API
 <p align="center">
-<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_ciphers.png", width=600, height=430 />
-<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_graph.png", width=600, height=430/>
+<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_ciphers.png", width=700, height=530 />
+<img src="https://github.com/wangjksjtu/SJTU-SSE/blob/master/docs/neo4j_v3_graph.png", width=650, height=530/>
 </p>
 
 ### SSE: Neo4j Many to Many API
