@@ -9,9 +9,11 @@ from rest_framework.response import Response
 from ciphertext.serializers import CiphertextSerializer, CipherSerializer
 from ciphertext.models import Ciphertext
 
+from ciphertext.models import ROOT_HEAD, Node
+
 from django.http import Http404
 
-content_size = 100
+content_size = 10
 
 class CiphertextViewSet(viewsets.ModelViewSet):
     serializer_class = CiphertextSerializer
@@ -82,3 +84,30 @@ def api_root(request, format=None):
     return Response({
         'ciphers': reverse('ciphertext-list', request=request, format=format),
     })
+
+@api_view(['GET'])
+def api_graph(request, format=None):
+    root_head = ROOT_HEAD.nodes.all()[0]
+    root_id = root_head.root.all()[0].id
+    nodes = Node.nodes.all()
+    js_w = {'nodes':[], 'edges':[]}
+    for node in nodes:
+        handle_id = node.id
+        js = None
+        if handle_id == root_id:
+            js = {'id':root_id, 'label':'ROOT', 'color':'#e04141'}
+        else:
+            js = {'id':handle_id, 'label':str(node.tree_size), 'color':'#e09c41'}
+        if node.is_real:
+            js['color'] = '#41e0c9'
+            js['label'] = 'FILE'
+        js_w['nodes'] += [js]
+        if node.left.all() != []:
+            left_id = node.left.all()[0].handle_id
+            js = {'from':handle_id, 'to':left_id}
+            js_w['edges'] += [js]
+        if node.right.all() != []:
+            right_id = node.right.all()[0].handle_id
+            js = {'from':handle_id, 'to':right_id}
+            js_w['edges'] += [js]
+    return Response(js_w)
