@@ -9,7 +9,7 @@ from neomodel import RelationshipTo
 
 from time import sleep
 
-
+SIZE = 100
 alpha = 0.7
 
 class Ciphertext(models.Model):
@@ -18,30 +18,24 @@ class Ciphertext(models.Model):
 
 class ROOT_HEAD(StructuredNode):
     root = RelationshipTo('Node', 'root')
-    content_size = IntegerProperty(default=100)
+    content_size = IntegerProperty(default=SIZE)
     need_rebuild = RelationshipTo('Node', 'need_build')
 
     def __root(self):
-        #print "------root-------"
         return None if self.root.all() == [] else self.root.all()[0]
     def __need_rebuild(self):
-        #print "----need_rebuild----"
         return None if self.need_rebuild.all() == [] else self.need_rebuild.all()[0]
 
     def __insert_inner(self, node, id, content):
-        print "---------insert_inner------------"
-        if type(node) != type(Node(handle_id=0, content_size=10)):
+        if type(node) != type(Node(handle_id=0, content_size=SIZE)):
             if len(node.all()) == 0:
                 newnode = Node(handle_id=id, is_real=True,
                         content=content, content_size=self.content_size,
                         max_id=id, min_id=id).save()
                 node.connect(newnode)
-                #newnode.father.connect(node)
                 return
 
-            print 'here inner insert'
             node = node.all()[0]
-            print type(node)
         else:
             pass
         if node.is_real:
@@ -63,15 +57,9 @@ class ROOT_HEAD(StructuredNode):
                 node.right.connect(q)
                 q.father.connect(node)
                 p.father.connect(node)
-            #print node.max_id, node.min_id
             node.update()
-            #print node.max_id, node.min_id
-            #print node.is_real
-            #print node.handle_id
             node.is_real = False
             node.save()
-            #node.refresh()
-            #print node.is_real
             return
 
         if id < node.handle_id:
@@ -89,12 +77,9 @@ class ROOT_HEAD(StructuredNode):
         ls = 0 if node.Left() == None else node.Left().tree_size
         rs = 0 if node.Right() == None else node.Right().tree_size
         if (max(ls, rs) > node.tree_size * alpha):
-            print "------ bigger than alpha---------"
-            print "__init__ need_rebuild" + str(self.__need_rebuild())
-            self.need_rebuild.connect(node)
+			self.need_rebuild.connect(node)
 
     def __getid(self, node, key):
-        print "-----------getid---------------------"
         result = []
         if node.content[key] == '0': return result
         if node.is_real:
@@ -110,7 +95,6 @@ class ROOT_HEAD(StructuredNode):
         return result
 
     def __dfs_getid(self, node):
-        print "-----------dfs-getid----------------"
         result = []
         if node.is_real:
             if node.Left() != None or node.Right() != None:
@@ -126,7 +110,8 @@ class ROOT_HEAD(StructuredNode):
         return result
 
     def __remove_inner(self, node, id):
-        print "-----------remove-inner--------------"
+        if node == None:
+            return 
         if node.is_real and node.handle_id == id:
             if node.Left() != None or node.Right() != None:
                 print "[Fatal Error]: Node %d had at least one son while removing it"
@@ -148,16 +133,10 @@ class ROOT_HEAD(StructuredNode):
 
         if max(ls, rs) > node.tree_size * alpha:
             self.need_rebuild.connect(node)
-            print "self.need_rebuild" + str(self.__need_rebuild())
 
     def __build(self, l, r, idseq, father):
-        print "-----------build-----------------"
-        print "l: " + str(l)
-        print "r: " + str(r)
         if l == r:
-            print "l == r"
             if idseq[l].Father() != None :
-                print "have old father"
                 oldfather = idseq[l].Father()
                 idseq[l].father.disconnect(oldfather)
             idseq[l].father.connect(father)
@@ -180,42 +159,33 @@ class ROOT_HEAD(StructuredNode):
         return node
 
     def __rebuild_subtree(self):
-        print "------rebuild-subtree-------"
         need_rebuild = self.__need_rebuild()
         father = need_rebuild.Father()
-        print "Father " + str(father)
         idseq = self.__dfs_getid(need_rebuild)
-        print "Idseq" + str(len(idseq))
         newnode = self.__build(0, len(idseq)-1, idseq, father)
-        print "------ build-finished-------"
         if father == None:
-            print "self.__root() " + str(self.__root())
+            #print "self.__root() " + str(self.__root())
             if self.__root() != None:
                 self.root.disconnect(self.__root())
             self.root.connect(newnode)
             return
 
         if father.Left() == need_rebuild:
-            print "father.Left() == need_rebuild"
             father.left.disconnect(need_rebuild)
             father.left.connect(newnode)
         else:
-            print "father.Right() == need_rebuild"
             if father.Right() != None:
                 father.right.disconnect(father.Right())
             #father.right.disconnect(need_rebuild)
             father.right.connect(newnode)
 
         while father != None:
-            print "Update father"
             father.update()
             father = father.Father()
 
     def insert(self, id, content):
         self.__insert_inner(self.root, id, content)
-        print "inner insert finshed"
         if self.__need_rebuild() != None:
-            print '------Need_rebuild--------'
             self.__rebuild_subtree()
 
     def remove(self, id):
@@ -227,9 +197,6 @@ class ROOT_HEAD(StructuredNode):
         result = self.__getid(self.__root(), key)
         return result
 
-#class IsFatherRel(StructuredRel):
-#    depth = IntegerProperty(blank=False)
-#    max_id = IntegerProperty(blank=False)
 
 class Node(StructuredNode):
     handle_id = IntegerProperty(blank=False)

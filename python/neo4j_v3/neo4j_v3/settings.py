@@ -24,7 +24,7 @@ SECRET_KEY = 'v8b0&(ppgb9!1)y6abov9*_hik^s=co!58i#o$32y*kb%!-rg^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.wangjksjtu.com.cn', u'127.0.0.1', '115.159.88.104']
 
 NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL', 'bolt://neo4j:wjkjk01@localhost:7687')
 
@@ -40,11 +40,22 @@ INSTALLED_APPS = [
     'django_neomodel',
     'ciphertext',
     'rest_framework',
+	'corsheaders',
+	'sslserver',
 ]
+
+#REST_FRAMEWORK = {
+#	'PAGE_SIZE':20
+#}
+
+REST_FRAMEWORK = {
+	'PAGE_SIZE': 10
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -121,3 +132,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ORIGIN_ALLOW_ALL = True

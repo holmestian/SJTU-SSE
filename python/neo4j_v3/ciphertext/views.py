@@ -13,55 +13,30 @@ from ciphertext.models import ROOT_HEAD, Node
 
 from django.http import Http404
 
-content_size = 10
+content_size = 100
 
 class CiphertextViewSet(viewsets.ModelViewSet):
     serializer_class = CiphertextSerializer
     #queryset = Ciphertext.objects.all()
 
     def get_queryset(self):
-        return Ciphertext.objects.all()
-
-    def perform_create(self, serializer):
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        serializer = CiphertextSerializer(instance)
-        serializer.delete(instance)
-        #print "I am here: delete"
-        #instance.delete()
-    '''
-    def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            print instance.id
-            print instance.content
-            print instance
-            self.perform_destroy(instance)
-            print "I am here: destory"
-        except Http404:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    '''
-    def list(self, request):
-        print "search here"
         qset = set()
-        key = request.GET.get('key', '')
+        key = self.request.GET.get('key', '')
         context = {
-            'request':request,
+            'request':self.request,
         }
-        serializer = CiphertextSerializer(self.get_queryset(),
-                context=context, many=True)
+        #serializer = CiphertextSerializer(self.get_queryset(),
+        #        context=context, many=True)
         if key:
             keys = key.split("-")
             for key in keys[0].split("|"):
                 if not key: break
                 if not (int(key) >= 0 and int(key) < content_size):
                     continue
-                s = CiphertextSerializer(self.get_queryset()[0],
+                s = CiphertextSerializer(Ciphertext.objects.first(),
                         context=context)
                 alist = s.search(int(key))
-                print alist
+#                print alist
                 qset |= set(alist)
             if len(keys) == 2:
                 for key in keys[1].split("|"):
@@ -71,13 +46,21 @@ class CiphertextViewSet(viewsets.ModelViewSet):
                     else:
                         continue
                     qset -= set(alist)
-                print qset
+#                print qset
             objs = Ciphertext.objects.filter(id__in=list(qset))
-            return Response(CiphertextSerializer(objs,
-                context=context, many=True).data)
+            return objs
         else:
-            return Response(serializer.data)
+            #return Response(serializer.data)
+            return Ciphertext.objects.all()
 
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        serializer = CiphertextSerializer(instance)
+        serializer.delete(instance)
+        #print "I am here: delete"
+        #instance.delete()
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -89,8 +72,14 @@ def api_root(request, format=None):
 def api_graph(request, format=None):
     root_head = ROOT_HEAD.nodes.all()[0]
     root_id = root_head.root.all()[0].id
+    #print root_id
     nodes = Node.nodes.all()
+    #js1 = {'nodes':[{'id':root_id, 'label':'ROOT_HEAD', 'color':'#e04141'}]}
+    #js2 = js1
+    #js1['nodes'] += js2['nodes']
     js_w = {'nodes':[], 'edges':[]}
+    #print type(root_head)
+    #print len(nodes)
     for node in nodes:
         handle_id = node.id
         js = None
@@ -101,13 +90,15 @@ def api_graph(request, format=None):
         if node.is_real:
             js['color'] = '#41e0c9'
             js['label'] = 'FILE'
+            js['handle_id'] = node.handle_id
         js_w['nodes'] += [js]
         if node.left.all() != []:
-            left_id = node.left.all()[0].handle_id
+            left_id = node.left.all()[0].id
             js = {'from':handle_id, 'to':left_id}
             js_w['edges'] += [js]
         if node.right.all() != []:
-            right_id = node.right.all()[0].handle_id
+            right_id = node.right.all()[0].id
             js = {'from':handle_id, 'to':right_id}
             js_w['edges'] += [js]
+    #print type(nodes)
     return Response(js_w)
