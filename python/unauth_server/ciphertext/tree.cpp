@@ -1,12 +1,12 @@
-#ifndef SJTU_Scapegoat_Tree_HPP
-#define SJTU_Scapegoat_Tree_HPP
-
+#include <iostream>
 #include <cstdio> 
 #include <cstdlib>
+#include <algorithm>
+#include <fstream>
+
+using namespace std;
 
 const double cSIZE_THRESHOLD = 0.7;
-
-namespace sjtu{
 
 class ScapegoatTreeNode{
 public:
@@ -259,6 +259,38 @@ public:
 	}
 };
 
-}
+extern "C" {
+	int ContentSize = 100;
+	ScapegoatTree obj(ContentSize);
 
-#endif
+	void Insert(int id, char* s) {
+		bool* content = new bool[ContentSize];
+		for (int i = 0; i < ContentSize; ++i) {
+			content[i] = int(s[i]) - 48;
+		}
+		obj.Insert(id, content);
+	}
+
+	void Remove(int id) {
+		obj.Remove(id);
+	}
+
+	void Query(int key, int* res, int size) {
+		ofstream fout("tmp");
+		obj.Query(key, res, size);
+		if (size > 0) {
+			sort(res, res + size);
+			for (int j = 0; j < size - 1; ++j) {
+				cout << res[j] << " ";
+				fout << res[j] << " ";
+			}
+			cout << res[size - 1] << endl;
+			fout << res[size - 1] << endl;
+			delete [] res;
+		}
+		else {
+			cout << "No result for this key word" << endl;
+			fout << endl;
+		}
+	}
+}

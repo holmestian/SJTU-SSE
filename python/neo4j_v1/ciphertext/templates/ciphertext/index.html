@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super }} | Home{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>Welcome ! </h1>
+        <h1>This is SJTU-SSE</h1>
+        </br>
+        <p class="lead">Load data and bootstrap using these <a href="https://github.com/wangjksjtu/SJTU-SSE">instructions</a>.</p>
+        </br>
+        <p><a role="button" href="http://127.0.0.1:7474/" class="btn btn-lg btn-success">SSE Nodes Graph</a></p>
+    </div>
+{% endblock %}
